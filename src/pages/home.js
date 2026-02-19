@@ -1,7 +1,14 @@
-// =============== Página Inicial (usa Layout) ===============
+// =============== PÁGINA INICIAL ===============
 
-import { renderLayout } from '../components/Layout.js';
+import { renderLayout, setMainContent } from '../components/Layout.js';
 
-// Renderiza a estrutura base (sem conteúdo) — estilo wiki
-renderLayout({ pageTitle: 'Página Inicial' });
+// Renderiza o layout com título central destacado (não modal)
+renderLayout({ serverName: 'AvaloriumOt', subtitle: 'Seja bem-vindo' });
+
+// Estrutura vazia da home — apenas placeholder para conteúdo
+setMainContent(`
+	<div class="home-structure">
+		<!-- Estrutura preparada para conteúdo da wiki (vazia) -->
+	</div>
+`);
 
