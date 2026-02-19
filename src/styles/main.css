@@ -234,23 +234,52 @@ body {
     opacity: 0.95;
 }
 
-.search-overlay span {
+/* Letras individuais da animação de digitação - mais suave */
+.search-overlay .letter {
     opacity: 0;
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(6px) scale(0.995);
     display: inline-block;
-    animation: letter-pop 320ms forwards;
+    animation: letter-pop 260ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 @keyframes letter-pop {
     from {
         opacity: 0;
-        transform: translateY(8px) scale(0.98);
+        transform: translateY(6px) scale(0.995);
     }
 
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+/* Logo pequena no cabeçario */
+.header-left .header-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+    margin-left: 4px;
+}
+
+/* Imagem central abaixo do título */
+.hero-image {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.hero-image img {
+    width: min(48vw, 560px);
+    max-width: 560px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 16px 48px rgba(2, 6, 12, 0.6);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.008));
 }
 
 /* caret customizado (apos os caracteres da overlay) */

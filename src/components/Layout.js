@@ -28,7 +28,10 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
 
     <div class="page-wrapper">
       <header class="app-header">
-        <div class="header-left"></div>
+        <div class="header-left">
+          <!-- Logo pequena à esquerda do cabeçario -->
+          <img src="src/assets/logo-avalorium.png" alt="Logo Avalorium" class="header-logo" />
+        </div>
         <div class="header-center">
           <div class="search-container">
             <input id="headerSearch" class="search-input" type="search" placeholder="" aria-label="Buscar" />
@@ -42,6 +45,10 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
         <section class="hero" id="hero">
           <h1 class="server-title">${serverName}</h1>
           <p class="server-subtitle">${subtitle}</p>
+          <!-- Imagem central abaixo do título (logotipo principal) -->
+          <div class="hero-image">
+            <img src="src/assets/logotipo-avalorium.jpeg" alt="Logotipo Avalorium" />
+          </div>
         </section>
 
         <section id="page-content" class="page-content"></section>
@@ -114,11 +121,14 @@ function _initSearch() {
             return;
         }
 
+        // Cria spans por caractere com delay suave para animação fluida
         for (let i = 0; i < text.length; i++) {
             const ch = text[i];
             const span = document.createElement('span');
+            span.className = 'letter';
             span.textContent = ch === ' ' ? '\u00A0' : ch;
-            span.style.animationDelay = `${i * 35}ms`;
+            // delay menor e mais linear para evitar efeito "bruto"
+            span.style.animationDelay = `${i * 28}ms`;
             overlay.appendChild(span);
         }
 
