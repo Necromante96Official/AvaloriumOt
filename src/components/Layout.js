@@ -97,14 +97,22 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
         <button id="editorScaleUp" class="editor-tool-btn" type="button">+</button>
         <button id="editorReset" class="editor-tool-btn" type="button">Resetar</button>
       </div>
-            <div class="editor-tools-row">
-                <button id="editorSave" class="editor-tool-btn" type="button">Salvar</button>
-                <button id="editorRestore" class="editor-tool-btn" type="button">Restaurar</button>
-            </div>
+      <div class="editor-tools-row">
+        <button id="editorSave" class="editor-tool-btn" type="button">Salvar</button>
+        <button id="editorRestore" class="editor-tool-btn" type="button">Restaurar</button>
+        <button id="editorClear" class="editor-tool-btn" type="button">Limpar</button>
+      </div>
       <div id="editorToolsHint" class="editor-tools-hint">Selecione algo e arraste para mover. Use + e - para tamanho.</div>
       <button id="editorExit" class="editor-exit-btn" type="button">Sair da edição</button>
     </div>
     `;
+
+    // Assegura que o painel de edição comece oculto (defesa extra)
+    const _toolsElem = document.getElementById('editorTools');
+    if (_toolsElem) {
+        _toolsElem.hidden = true;
+        _toolsElem.style.display = 'none';
+    }
 
     // Inicializa comportamentos interativos
     _initSidebar();
@@ -167,31 +175,26 @@ function _initSearch() {
 
     function render(text) {
         overlay.innerHTML = '';
-        // se não há texto, mostra placeholder estilizado
         if (!text) {
             const span = document.createElement('span');
             span.className = 'placeholder';
             span.textContent = placeholderText;
             overlay.appendChild(span);
-            // caret
             const caret = document.createElement('span');
             caret.className = 'search-caret';
             overlay.appendChild(caret);
             return;
         }
 
-        // Cria spans por caractere com delay suave para animação fluida
         for (let i = 0; i < text.length; i++) {
             const ch = text[i];
             const span = document.createElement('span');
             span.className = 'letter';
             span.textContent = ch === ' ' ? '\u00A0' : ch;
-            // delay menor e mais linear para evitar efeito "bruto"
             span.style.animationDelay = `${i * 28}ms`;
             overlay.appendChild(span);
         }
 
-        // caret posicionado após o último caractere (custom caret)
         const caret = document.createElement('span');
         caret.className = 'search-caret';
         overlay.appendChild(caret);
@@ -201,7 +204,6 @@ function _initSearch() {
     input.addEventListener('focus', () => overlay.classList.add('focus'));
     input.addEventListener('blur', () => overlay.classList.remove('focus'));
 
-    // render initial
     render(input.value || '');
 }
 
@@ -220,9 +222,10 @@ function _initEditorAccess() {
     const resetBtn = document.getElementById('editorReset');
     const saveBtn = document.getElementById('editorSave');
     const restoreBtn = document.getElementById('editorRestore');
+    const clearBtn = document.getElementById('editorClear');
     const exitBtn = document.getElementById('editorExit');
 
-    if (!modal || !form || !userInput || !passInput || !message || !tools || !moveToggle || !textToggle || !scaleDown || !scaleUp || !resetBtn || !saveBtn || !restoreBtn || !exitBtn) return;
+    if (!modal || !form || !userInput || !passInput || !message || !tools || !moveToggle || !textToggle || !scaleDown || !scaleUp || !resetBtn || !saveBtn || !restoreBtn || !clearBtn || !exitBtn) return;
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -275,6 +278,9 @@ function _initEditorAccess() {
     });
     restoreBtn.addEventListener('click', async () => {
         await _restoreLayoutState(true);
+    });
+    clearBtn.addEventListener('click', async () => {
+        await _clearSavedLayoutState();
     });
 
     exitBtn.addEventListener('click', () => {
@@ -419,6 +425,7 @@ function _enableEditorMode() {
 
     document.body.classList.add('editor-mode-enabled');
     tools.hidden = false;
+    tools.style.display = '';
 
     _registerEditorTargets();
     _setEditorHint('Modo edição ativo: selecione, arraste e redimensione elementos.');
@@ -438,7 +445,10 @@ function _disableEditorMode() {
         editorState.selectedElement = null;
     }
 
-    if (tools) tools.hidden = true;
+    if (tools) {
+        tools.hidden = true;
+        tools.style.display = 'none';
+    }
     document.body.classList.remove('editor-mode-enabled');
 }
 
@@ -572,6 +582,25 @@ async function _saveLayoutState() {
         _setEditorHint('Layout salvo no arquivo do servidor e aplicado para todos os visitantes.');
     } catch (_error) {
         _setEditorHint('Não foi possível salvar no servidor. Verifique se o backend está rodando.');
+    }
+}
+
+async function _clearSavedLayoutState() {
+    if (!editorState.adminSession) {
+        _setEditorHint('Acesso admin não encontrado. Entre novamente com Ctrl + F9.');
+        return;
+    }
+
+    try {
+        await saveSharedLayoutState({
+            user: editorState.adminSession.user,
+            password: editorState.adminSession.password,
+            payload: { version: 1, savedAt: Date.now(), items: {} }
+        });
+        _setEditorHint('Layout salvo limpo. Restaurando padrão...');
+        await _restoreLayoutState(true);
+    } catch (_error) {
+        _setEditorHint('Falha ao limpar layout salvo. Verifique o servidor.');
     }
 }
 
