@@ -32,7 +32,10 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
           <img src="src/assets/logo.svg" alt="${serverName} logo" class="logo" />
         </div>
         <div class="header-right">
-          <!-- Espaço para ações futuras -->
+          <div class="search-container">
+            <input id="headerSearch" class="search-input" type="search" placeholder="" aria-label="Pesquisar" />
+            <div id="searchOverlay" class="search-overlay" aria-hidden="true"></div>
+          </div>
         </div>
       </header>
 
@@ -42,19 +45,16 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
           <p class="server-subtitle">${subtitle}</p>
         </section>
 
-        <section id="page-content" class="page-content">
-          <!-- Conteúdo das páginas será inserido aqui -->
-        </section>
+        <section id="page-content" class="page-content"></section>
       </main>
 
-      <footer class="app-footer">
-        <div class="footer-inner">© ${new Date().getFullYear()} ${serverName}</div>
-      </footer>
+      <footer class="app-footer"><div class="footer-inner">© ${new Date().getFullYear()} ${serverName}</div></footer>
     </div>
     `;
 
-    // Inicializa comportamento interativo da sidebar
+    // Inicializa comportamentos interativos
     _initSidebar();
+    _initSearch();
 }
 
 function _initSidebar() {
@@ -91,4 +91,38 @@ function _initSidebar() {
 export function setMainContent(html) {
     const container = document.getElementById('page-content');
     if (container) container.innerHTML = html;
+}
+
+function _initSearch() {
+    const input = document.getElementById('headerSearch');
+    const overlay = document.getElementById('searchOverlay');
+    if (!input || !overlay) return;
+
+    const placeholderText = 'Pesquisar...';
+
+    function render(text) {
+        overlay.innerHTML = '';
+        if (!text) {
+            const span = document.createElement('span');
+            span.className = 'placeholder';
+            span.textContent = placeholderText;
+            overlay.appendChild(span);
+            return;
+        }
+
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i];
+            const span = document.createElement('span');
+            span.textContent = ch === ' ' ? '\u00A0' : ch;
+            span.style.animationDelay = `${i * 35}ms`;
+            overlay.appendChild(span);
+        }
+    }
+
+    input.addEventListener('input', (e) => render(e.target.value));
+    input.addEventListener('focus', () => overlay.classList.add('focus'));
+    input.addEventListener('blur', () => overlay.classList.remove('focus'));
+
+    // render initial
+    render(input.value || '');
 }
