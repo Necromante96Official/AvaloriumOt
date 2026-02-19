@@ -1,0 +1,1 @@
+Esta pasta deve conter componentes JS reutilizáveis do site wiki AvaloriumOt.

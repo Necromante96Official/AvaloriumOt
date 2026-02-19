@@ -1,0 +1,44 @@
+/* =============== Estilo Global Dark-Blue Moderno =============== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #0a2342 0%, #193b6a 100%);
+    color: #e0e6ed;
+    min-height: 100vh;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* =============== Componentes =============== */
+.wiki-container {
+    background: rgba(20, 34, 61, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 48px 32px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.wiki-title {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #4fc3f7;
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px #0a2342;
+}
+
+.wiki-welcome {
+    font-size: 1.3rem;
+    color: #b3c6e0;
+    margin-bottom: 0;
+}

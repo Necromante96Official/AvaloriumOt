@@ -1,0 +1,1 @@
+Esta pasta deve conter imagens, ícones e outros arquivos estáticos do site wiki AvaloriumOt.
