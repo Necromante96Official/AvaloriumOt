@@ -1,9 +1,10 @@
 // =============== Componente Layout (estrutura base do Wiki) ===============
 
+import { fetchSharedLayoutState, saveSharedLayoutState } from '../services/layoutPersistenceService.js';
+
 const ROOT_ID = 'app-root';
 const ADMIN_USER = 'ADM';
 const ADMIN_PASSWORD = '1234';
-const EDITOR_STORAGE_KEY = 'avalorium_layout_persist_v1';
 
 const editorState = {
     enabled: false,
@@ -12,7 +13,8 @@ const editorState = {
     moveMode: true,
     textMode: false,
     dragData: null,
-    handlersBound: false
+    handlersBound: false,
+    adminSession: null
 };
 
 const elementTransformMap = new WeakMap();
@@ -109,7 +111,9 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
     _initSearch();
     _initEditorAccess();
     _registerEditorTargets();
-    _restoreLayoutState();
+    _restoreLayoutState().catch(() => {
+        // Ignora falhas silenciosas no carregamento inicial
+    });
 }
 
 function _initSidebar() {
@@ -148,7 +152,9 @@ export function setMainContent(html) {
     if (container) {
         container.innerHTML = html;
         _registerEditorTargets();
-        _restoreLayoutState();
+        _restoreLayoutState().catch(() => {
+            // Ignora falhas silenciosas no carregamento inicial
+        });
     }
 }
 
@@ -225,6 +231,7 @@ function _initEditorAccess() {
         const passValue = passInput.value.trim();
 
         if (userValue === ADMIN_USER && passValue === ADMIN_PASSWORD) {
+            editorState.adminSession = { user: userValue, password: passValue };
             message.textContent = 'Acesso autorizado. Transição concluída...';
             modal.classList.remove('error');
             modal.classList.add('success');
@@ -238,6 +245,7 @@ function _initEditorAccess() {
 
         modal.classList.remove('success');
         modal.classList.add('error');
+        editorState.adminSession = null;
         message.textContent = 'Identificação inválida. Usuário ou senha incorretos.';
     });
 
@@ -262,8 +270,12 @@ function _initEditorAccess() {
     scaleDown.addEventListener('click', () => _scaleSelectedElement(-0.08));
     scaleUp.addEventListener('click', () => _scaleSelectedElement(0.08));
     resetBtn.addEventListener('click', _resetSelectedElementTransform);
-    saveBtn.addEventListener('click', _saveLayoutState);
-    restoreBtn.addEventListener('click', () => _restoreLayoutState(true));
+    saveBtn.addEventListener('click', async () => {
+        await _saveLayoutState();
+    });
+    restoreBtn.addEventListener('click', async () => {
+        await _restoreLayoutState(true);
+    });
 
     exitBtn.addEventListener('click', () => {
         _disableEditorMode();
@@ -506,9 +518,14 @@ function _resetSelectedElementTransform() {
     _setEditorHint('Transformações do elemento selecionado foram resetadas.');
 }
 
-function _saveLayoutState() {
+async function _saveLayoutState() {
     const wrapper = document.querySelector('.page-wrapper');
     if (!wrapper) return;
+
+    if (!editorState.adminSession) {
+        _setEditorHint('Acesso admin não encontrado. Entre novamente com Ctrl + F9.');
+        return;
+    }
 
     const nodes = wrapper.querySelectorAll('[data-editor-target="true"]');
     const items = {};
@@ -547,33 +564,23 @@ function _saveLayoutState() {
     };
 
     try {
-        localStorage.setItem(EDITOR_STORAGE_KEY, JSON.stringify(payload));
-        _setEditorHint('Layout salvo permanentemente neste navegador.');
+        await saveSharedLayoutState({
+            user: editorState.adminSession.user,
+            password: editorState.adminSession.password,
+            payload
+        });
+        _setEditorHint('Layout salvo no arquivo do servidor e aplicado para todos os visitantes.');
     } catch (_error) {
-        _setEditorHint('Não foi possível salvar o layout neste navegador.');
+        _setEditorHint('Não foi possível salvar no servidor. Verifique se o backend está rodando.');
     }
 }
 
-function _restoreLayoutState(showFeedback = false) {
-    let savedRaw = null;
-
-    try {
-        savedRaw = localStorage.getItem(EDITOR_STORAGE_KEY);
-    } catch (_error) {
-        if (showFeedback) _setEditorHint('Não foi possível acessar os dados salvos.');
-        return false;
-    }
-
-    if (!savedRaw) {
-        if (showFeedback) _setEditorHint('Nenhum layout salvo encontrado para restaurar.');
-        return false;
-    }
-
+async function _restoreLayoutState(showFeedback = false) {
     let parsed = null;
     try {
-        parsed = JSON.parse(savedRaw);
+        parsed = await fetchSharedLayoutState();
     } catch (_error) {
-        if (showFeedback) _setEditorHint('Layout salvo inválido.');
+        if (showFeedback) _setEditorHint('Não foi possível carregar o layout do servidor.');
         return false;
     }
 
