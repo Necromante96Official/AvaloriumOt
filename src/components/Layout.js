@@ -28,15 +28,14 @@ export function renderLayout({ serverName = 'AvaloriumOt', subtitle = 'Seja bem-
 
     <div class="page-wrapper">
       <header class="app-header">
-        <div class="header-left">
-          <img src="src/assets/logo.svg" alt="${serverName} logo" class="logo" />
-        </div>
-        <div class="header-right">
+        <div class="header-left"></div>
+        <div class="header-center">
           <div class="search-container">
-            <input id="headerSearch" class="search-input" type="search" placeholder="" aria-label="Pesquisar" />
+            <input id="headerSearch" class="search-input" type="search" placeholder="" aria-label="Buscar" />
             <div id="searchOverlay" class="search-overlay" aria-hidden="true"></div>
           </div>
         </div>
+        <div class="header-right"></div>
       </header>
 
       <main id="main" class="main-content">
@@ -98,15 +97,20 @@ function _initSearch() {
     const overlay = document.getElementById('searchOverlay');
     if (!input || !overlay) return;
 
-    const placeholderText = 'Pesquisar...';
+    const placeholderText = 'Buscar...';
 
     function render(text) {
         overlay.innerHTML = '';
+        // se não há texto, mostra placeholder estilizado
         if (!text) {
             const span = document.createElement('span');
             span.className = 'placeholder';
             span.textContent = placeholderText;
             overlay.appendChild(span);
+            // caret
+            const caret = document.createElement('span');
+            caret.className = 'search-caret';
+            overlay.appendChild(caret);
             return;
         }
 
@@ -117,6 +121,11 @@ function _initSearch() {
             span.style.animationDelay = `${i * 35}ms`;
             overlay.appendChild(span);
         }
+
+        // caret posicionado após o último caractere (custom caret)
+        const caret = document.createElement('span');
+        caret.className = 'search-caret';
+        overlay.appendChild(caret);
     }
 
     input.addEventListener('input', (e) => render(e.target.value));
