@@ -1,8 +1,7 @@
-// =============== Página Inicial do Wiki AvaloriumOt ===============
+// =============== Página Inicial (usa Layout) ===============
 
-import { renderHome } from '../components/HomeComponent.js';
+import { renderLayout } from '../components/Layout.js';
 
-// Renderiza o componente Home na div root
-window.onload = function () {
-    renderHome();
-};
+// Renderiza a estrutura base (sem conteúdo) — estilo wiki
+renderLayout({ pageTitle: 'Página Inicial' });
+

@@ -1,1 +1,0 @@
-Esta pasta deve conter as páginas JS do site wiki AvaloriumOt.

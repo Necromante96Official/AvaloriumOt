@@ -42,3 +42,237 @@ body {
     color: #b3c6e0;
     margin-bottom: 0;
 }
+
+/* =============== Estrutura de Layout tipo Wiki =============== */
+.site-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(6px);
+    background: rgba(8, 18, 34, 0.65);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.logo-img {
+    width: 36px;
+    height: 36px;
+}
+
+.logo-text {
+    color: #4fc3f7;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.top-nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.nav-link {
+    color: #d6eaf8;
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.95rem
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-lang {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.search-input {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    color: inherit
+}
+
+.lang-select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    color: inherit
+}
+
+.site-body {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 28px auto;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box
+}
+
+.site-sidebar {
+    width: 260px;
+    flex: 0 0 260px;
+}
+
+.sidebar-inner {
+    background: rgba(12, 24, 42, 0.6);
+    border-radius: 12px;
+    padding: 16px;
+    color: #c9d9ee
+}
+
+.sidebar-title {
+    font-size: 0.95rem;
+    color: #8fbde6;
+    margin: 0 0 8px 0
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+.sidebar-link {
+    display: block;
+    color: #d6eaf8;
+    text-decoration: none;
+    padding: 8px 6px;
+    border-radius: 6px
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.02)
+}
+
+.site-content {
+    flex: 1;
+    min-width: 0
+}
+
+.content-inner {
+    background: rgba(17, 30, 52, 0.6);
+    border-radius: 12px;
+    padding: 20px;
+    color: #dfeaf8
+}
+
+.page-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px
+}
+
+.breadcrumbs {
+    font-size: 0.9rem;
+    color: #9fb9db
+}
+
+.page-actions {
+    display: flex;
+    gap: 8px
+}
+
+.page-article {
+    margin-top: 8px
+}
+
+.page-title {
+    font-size: 2rem;
+    color: #7fe0ff;
+    margin: 8px 0
+}
+
+.page-toc {
+    margin: 12px 0;
+    color: #bcd9f0
+}
+
+.page-body {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 8px;
+    min-height: 220px
+}
+
+.page-body.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9fb9db;
+    border: 2px dashed rgba(255, 255, 255, 0.03)
+}
+
+.btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer
+}
+
+.btn-ghost {
+    background: transparent
+}
+
+.site-footer {
+    margin-top: auto;
+    padding: 18px 20px;
+    text-align: center;
+    color: #9fb9db
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+    .site-body {
+        flex-direction: column
+    }
+
+    .site-sidebar {
+        width: 100%;
+        order: 2
+    }
+
+    .site-content {
+        order: 1
+    }
+
+    .top-nav {
+        display: none
+    }
+}
